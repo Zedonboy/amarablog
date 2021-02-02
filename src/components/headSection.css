@@ -1,0 +1,6 @@
+.bg-image{
+    background-image: url('../images/bg.png');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}

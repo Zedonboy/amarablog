@@ -1,0 +1,116 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('./typography.css');
+
+.blog-name {
+    font-family: 'Oswald', sans-serif;
+}
+.post-header,
+.post-content {
+    @apply py-2 px-4;
+}
+
+.post-excerpt {
+    @apply text-lg mt-4
+}
+
+.post-content p {
+    @apply mt-4 text-base font-sans
+}
+
+.post-content blockquote {
+    @apply border-l-4 border-emerald-500 p-4 italic text-xl
+}
+
+.post-content h1,
+.post-content h2,
+.post-content h3,
+.post-content h4,
+.post-content h5,
+.post-content h6 {
+    @apply font-semibold
+}
+
+.post-content h1 {
+    @apply text-5xl
+}
+
+.post-content h2 {
+    @apply text-4xl
+}
+
+.post-content h3 {
+    @apply text-3xl
+}
+
+.post-content h4 {
+    @apply text-2xl
+}
+
+.post-content h5 {
+    @apply text-xl
+}
+
+.post-content h6 {
+    @apply text-lg
+}
+
+.post-content strong {
+    @apply font-bold
+}
+
+.post-content a {
+    @apply font-semibold text-base text-emerald-500
+}
+
+.post-content a:hover {
+    text-decoration: underline;
+}
+.post-content ul,
+ol {
+    @apply mt-4
+}
+
+.post-content figcaption {
+    @apply text-center
+}
+
+.post-template img {
+    display: block;
+    max-width: 100%;
+}
+
+.kg-width-wide img {
+    max-width: 85vw;
+}
+
+.kg-width-full img {
+    max-width: 100vw;
+}
+
+.post-template figure {
+    margin: 0;
+}
+
+.post-template figcaption {
+    text-align: center;
+}
+
+.nav li .item:hover::before {
+    right: 12px;
+    opacity: .5;
+}
+
+.nav li .item::before {
+    content: "";
+    position: absolute;
+    right: 100%;
+    bottom: 8px;
+    left: 12px;
+    height: 1px;
+    background: #fff;
+    opacity: .25;
+    transition: all .35s ease-in-out;
+}
