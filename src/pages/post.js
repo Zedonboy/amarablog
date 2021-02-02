@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import Layout from "../components/layout"
 import AuthorFooter from "../components/AuthorUI"
 import Tag from "../components/tag"
@@ -13,28 +13,34 @@ function shorten(data = "") {
   } else data.concat("...")
 }
 const Post = () => {
-  let url = new URL(window.location.href)
+  const [data, setData] = useState(null)
+  const [error, setError] = useState(null)
+  const [latestPost, setLatestPost] = useState(null)
+  const [latestPostError, setlatestPostError] = useState(null)
+  const [postTags, setPostTags] = useState(null)
+  const [postTagsError, setPostTagsError] = useState(null)
+  useEffect(()=> {
+    let url = new URL(window.location.href)
   const slug = url.searchParams.get("slug")
-  const { data : postData, error } = useSWR(
-    `${host}/posts/slug/${slug}?key=${key}&include=authors,tags`,
-    fetcher
-  )
-  const { data: _latestPost, error: latestPostError } = useSWR(
-    `${host}/posts/?key=${key}&published_at=DESC&limit=7&include=tags,authors`,
-    fetcher
-  )
-  const { data: _postTags, error: postTagsError } = useSWR(
-    postData
-      ? `${host}/posts/?key=${key}&filter=tag:${postData.posts[0].primary_tag.slug}&limit=6&publish_at=DESC`
-      : null,
-    fetcher
-  )
-  let data = null
-  let latestPost = null
-  let postTags = null
-  if(postData) data = postData.posts[0]
-  if(_latestPost) latestPost = _latestPost.posts
-  if(_postTags) postTags = _postTags.posts
+  const fetchData = async () => {
+    fetcher(
+      slug
+    ? `${host}/posts/slug/${slug}?key=${key}&include=authors,tags`
+    : null
+    ).then(d => {
+      setData(d.posts[0])
+      fetcher(`${host}/posts/?key=${key}&filter=tag:${d.posts[0].primary_tag.slug}&limit=6&publish_at=DESC`)
+      .then(d => setPostTags(d.posts))
+      .catch(e => setPostTagsError(e))
+    }).catch(e => setError(e))
+
+    fetcher(`${host}/posts/?key=${key}&published_at=DESC&limit=7&include=tags,authors`).then(d => setLatestPost(d.posts)).catch(e => setlatestPostError(e))
+
+  }
+
+  fetchData()
+  }, [])
+ 
   return (
     <Layout>
       <main className="md:px-40 bg-pink-light dark:bg-gray-900 font-sans">

@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { Link } from "gatsby"
 
 import Layout from "../components/layout"
@@ -27,13 +27,24 @@ export const fetcher = async (...url) => {
     error.status = res.status
     throw error
   }
-  return res.json()
+  return await res.json()
 }
 const IndexPage = () => {
-  const { data, error } = useSWR(
-    `${host}/posts/?key=${key}&published_at=DESC&limit=7&include=tags,authors`,
-    fetcher
-  )
+  const [data, setData] = useState(null)
+  const [error, setError] = useState(null)
+  useEffect(() => {
+    const fetchData = async() => {
+      try {
+        let _data = await fetcher(`${host}/posts/?key=${key}&published_at=DESC&limit=7&include=tags,authors`)
+      setData(_data)
+      } catch (error) {
+        setError(error)
+      }   
+    }
+
+    fetchData()
+  }, [])
+  
   return (
     <Layout>
       <HeadSection />

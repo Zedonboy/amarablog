@@ -1,35 +1,43 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import Layout from "../components/layout"
 import BlogSection from "../components/BlogSection"
 import ArticleMedium from "../components/articleMedium"
 import { key, host } from "../config/config"
 import { fetcher } from "."
 import Loading from "../components/Loading"
-import useSWR from 'swr'
+import useSWR from "swr"
 
 const AuthorPage = () => {
-  let url = new URL(window.location.href)
-  const slug = url.searchParams.get("slug")
-  const { data : dataAuthor, error } = useSWR(
-    `${host}/authors/slug/${slug}?key=${key}&include=authors,tags`,
-    fetcher
-  )
-  const { data: _postTags, error: postTagsError } = useSWR(
-    dataAuthor
-      ? `${host}/posts/?key=${key}&include=tags,authors&filter=authors:${dataAuthor.authors[0].slug}&limit=6&publish_at=DESC`
-      : null,
-    fetcher
-  )
-  let data = null
-  let postTags = null
-  if(dataAuthor) data = dataAuthor.authors[0]
-  if(_postTags) postTags = _postTags.posts
+  const [data, setData] = useState(null)
+  const [error, setError] = useState(null)
+  const [postTags, setPostTags] = useState(null)
+  const [postTagsError, setPostTagsError] = useState(null)
+  useEffect(() => {
+    let url = new URL(window.location.href)
+    const slug = url.searchParams.get("slug")
+    const fetchData = async () => {
+      fetcher(
+        slug
+          ? `${host}/authors/slug/${slug}?key=${key}&include=authors,tags`
+          : null
+      )
+        .then(d => {
+          setData(d.authors[0])
+          fetcher(
+            `${host}/posts/?key=${key}&include=tags,authors&filter=authors:${d.authors[0].slug}&limit=6&publish_at=DESC`
+          )
+            .then(d => setPostTags(d.posts))
+            .catch(e => setPostTagsError(e))
+        })
+        .catch(e => setError(e))
+    }
+
+    fetchData()
+  }, [])
   return (
     <Layout>
       <main className="md:px-40 bg-pink-light dark:bg-gray-900 font-sans">
-        {error ? <div>
-          Error geting Author
-        </div> : null}
+        {error ? <div>Error geting Author</div> : null}
         <header className="p-4 flex flex-wrap">
           {postTagsError ? <div>Error Fetching Post Data</div> : null}
           <figure className="p-2">
