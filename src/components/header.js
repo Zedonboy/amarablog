@@ -75,7 +75,7 @@ const Header = ({ siteTitle }) => {
               Home
             </a>
           </li>
-          <li>
+          {/* <li>
             <a className="item p-4 m-auto block relative" href="/post">
               Post
             </a>
@@ -90,7 +90,7 @@ const Header = ({ siteTitle }) => {
               Author
             </a>
           </li>
-          <li className="flex justify center items-center">
+          <li className="flex justify center items-center"> */}
               <span>DarkMode</span>&nbsp;&nbsp;<SwitchBox onChange={e => {
                 let html = document.getElementsByTagName("html").item(0)
                 html.classList.toggle("dark")
